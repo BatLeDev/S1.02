@@ -1,6 +1,6 @@
 # SAE 1.02 - Comparaison d’approches algorithmiques
 
-Auteur : GUERNY Baptiste - PERROT Jean
+Auteur : GUERNY Baptiste - PERROT Jean  
 Groupe : INFO1C1
 
 Date limite de rendu : 22/01/2022
