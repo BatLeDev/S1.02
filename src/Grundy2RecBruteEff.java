@@ -18,10 +18,11 @@ class Grundy2RecBruteEff {
      * Méthode principal du programme
      */
     void principal() {
+        partieJoueurOrdinateur();
         // testJouerGagnant();
         // testPremier();
         // testSuivant();
-        testJouerGagnantEfficacite();
+        // testJouerGagnantEfficacite();
     }
 
     /**
@@ -480,6 +481,125 @@ class Grundy2RecBruteEff {
             System.out
                     .println("Pour n = " + n + ": \tTemps d'exécution = " + ms + " ms \tCompteur = " + CPT);
             n++;
+        }
+    }
+
+    /**
+     * Affiche le plateau de jeu
+     * 
+     * @param plateau  le plateau du jeu
+     */
+    void afficherPlateau(ArrayList<Integer> plateau) {
+        int taille = plateau.size();
+        int i = 0;
+        while (i < taille) { // Affiche chaque ligne du plateau
+            System.out.print(i + " :");
+            for (int j = 0; j < plateau.get(i); j++) {
+                System.out.print(" | ");
+            }
+            System.out.println();
+            i++;
+        }
+    }
+
+    /**
+     * Tour du joueur :
+     * - Demande la ligne à jouer
+     * - Demande le nombre de tas à séparer
+     * Separe les tas
+     * 
+     * @param plateau tableau du jeu
+     */
+    void tourJoueur(ArrayList<Integer> plateau) {
+
+        // Cherche si il y a une seul ligne jouable la choisir auto, sinon la demander
+        int ligne = 0; // La ligne a jouer
+        int nbLigneJouable = 0;
+
+        int i = 0;
+        while (i < plateau.size() && nbLigneJouable <= 2) {
+            if (plateau.get(i) > 2) {
+                ligne = i; // On sauvegarde la ligne a jouer auto
+                nbLigneJouable += 1;
+            }
+            i++;
+        }
+
+        // Si il y a plus d'une ligne jouable
+        if (nbLigneJouable > 1) {
+            // Demande la saisie d'une ligne jouable
+            ligne = SimpleInput.getInt("Ligne : ");
+            while (ligne < 0 || ligne >= plateau.size() || plateau.get(ligne) <= 2) {
+                ligne = SimpleInput.getInt("Ligne : ");
+            }
+        }
+
+        // Le nombre saisit doit permetre de diviser en 2 partie inégale
+        int nombre = SimpleInput.getInt("Nombre d’allumettes à séparer : ");
+        while (nombre <= 0 || nombre >= plateau.get(ligne) || (plateau.get(ligne) - nombre) == nombre) {
+            nombre = SimpleInput.getInt("Nombre d’allumettes à séparer : ");
+        }
+
+        // Modifie le plateau
+        enlever(plateau, ligne, nombre);
+    }
+
+    /**
+     * Tour de l'ordinateur :
+     * - Joue gagnant si possible
+     * - Joue aléatoirement sinon
+     * 
+     * @param plateau tableau du jeu
+     */
+    void tourOrdinateur(ArrayList<Integer> plateau) {
+        boolean coupGagnant = jouerGagnant(plateau);
+        if (!coupGagnant) { // Si l'ordinateur ne peut pas gagner, jouer aléatoirement
+
+            // Cherche la première ligne jouable
+            int ligne = 0;
+            while (plateau.get(ligne) <= 2) {
+                ligne++;
+            }
+
+            // Choisit une séparation aléatoire
+            int nombre = 1 + (int) (Math.random() * plateau.get(ligne)); // Une décomposition (nb entre 1 et nbDecompo)
+
+            enlever(plateau, ligne, nombre);
+        }
+    }
+
+    /**
+     * Initialise la partie
+     * Fait jouer tour à tour l'ordinateur et le joueur.
+     * S'arrete lorsqu'il y a un gagnant et l'affiche.
+     */
+    void partieJoueurOrdinateur() {
+        String nomJoueur = SimpleInput.getString("Nom du joueur : ");
+        int nbAllumettes = SimpleInput.getInt("Nombre d'allumettes : ");
+        boolean tourJoueur = SimpleInput.getBoolean("Voulez vous commencer ? (true/false) : ");
+
+        ArrayList<Integer> plateau = new ArrayList<Integer>();
+        plateau.add(nbAllumettes);
+        afficherPlateau(plateau);
+
+        while (estPossible(plateau)) {
+            if (tourJoueur) {
+                System.out.println("C'est au tour de : " + nomJoueur);
+                tourJoueur(plateau);
+            } else {
+                System.out.println("C'est au tour de l'ordinateur");
+                tourOrdinateur(plateau);
+            }
+
+            afficherPlateau(plateau);
+            // Echange le tour des joueurs
+            tourJoueur = !tourJoueur;
+        }
+
+        if (tourJoueur) { // Si le joueur ne peut plus jouer
+            System.out.println("L'ordinateur a gagné.");
+        } else {
+            System.out.println(nomJoueur + " a gagné.");
         }
     }
 }
