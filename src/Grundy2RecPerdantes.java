@@ -23,10 +23,13 @@ class Grundy2RecPerdantes {
         // testJouerGagnant();
         // testPremier();
         // testSuivant();
-        testJouerGagnantEfficacite();
+        // testJouerGagnantEfficacite();
+        testCleanEssai();
+        testEstPresent();
+        testAjouterEssai();
     }
 
-    // TODO les 3 méthodes de test des 3 dernières fonctions
+    // TODO: Je trouve les méthodes de test pas jojo a voir mais tempis...
 
     /**
      * Retire les 1 et les 0 d'un essai et le tri
@@ -50,6 +53,31 @@ class Grundy2RecPerdantes {
     }
 
     /**
+     * Test la méthode cleanEssai
+     */
+    void testCleanEssai() {
+        System.out.println("*** testCleanEssai() ***");
+        ArrayList<Integer> essai = new ArrayList<Integer>();
+        essai.add(1);
+        essai.add(3);
+        essai.add(2);
+        essai.add(4);
+        essai.add(5);
+
+        ArrayList<Integer> essaiCleanAtt = new ArrayList<Integer>();
+        essaiCleanAtt.add(3);
+        essaiCleanAtt.add(4);
+        essaiCleanAtt.add(5);
+
+        ArrayList<Integer> essaiClean = cleanEssai(essai);
+        if (essaiClean.equals(essaiCleanAtt)) {
+            System.out.println("OK");
+        } else {
+            System.out.println("ERREUR");
+        }
+    }
+
+    /**
      * Cherche si un essai trié est dans le tableau des situations perdantes
      * 
      * @param essai essai à chercher
@@ -57,16 +85,45 @@ class Grundy2RecPerdantes {
      */
     boolean estPresent(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> SitSaved) {
         boolean ret = false;
-        int i = 0;
         ArrayList<Integer> essaiClean = cleanEssai(essai);
 
-        while (i < SitSaved.size() && !ret) {
-            if (SitSaved.get(i).equals(essaiClean)) {
+        int i = 0;
+        while (i < SitSaved.size() && !ret) { // Parcours de la liste des situations
+            if (SitSaved.get(i).equals(essaiClean)) { // Si une situation connue corespond a l'essai
                 ret = true;
             }
             i++;
         }
         return ret;
+    }
+
+    /**
+     * Test la méthode estPresent
+     */
+    void testEstPresent() {
+        System.out.println("*** testEstPresent() ***");
+        ArrayList<Integer> essai = new ArrayList<Integer>();
+        essai.add(1);
+        essai.add(3);
+        essai.add(2);
+        essai.add(4);
+        essai.add(5);
+
+        ArrayList<Integer> essaiClean = cleanEssai(essai);
+
+        SIT_PERD.clear();
+        if (estPresent(essaiClean, SIT_PERD)) {
+            System.out.println("Element non présent: ERREUR");
+        } else {
+            System.out.println("Element non présent: OK");
+        }
+
+        SIT_PERD.add(essaiClean);
+        if (estPresent(essaiClean, SIT_PERD)) {
+            System.out.println("Element présent: OK");
+        } else {
+            System.out.println("Element présent: ERREUR");
+        }
     }
 
     /**
@@ -81,6 +138,28 @@ class Grundy2RecPerdantes {
                 ArrayList<Integer> essaiClean = cleanEssai(essai);
                 SitSaved.add(essaiClean);
             }
+        }
+    }
+
+    /**
+     * Test la méthode ajouterEssai
+     */
+    void testAjouterEssai() {
+        System.out.println("*** testAjouterEssai() ***");
+        ArrayList<Integer> essai = new ArrayList<Integer>();
+        essai.add(1);
+        essai.add(3);
+        essai.add(2);
+        essai.add(4);
+        essai.add(5);
+
+        SIT_PERD.clear();
+
+        ajouterEssai(essai, SIT_PERD);
+        if (estPresent(essai, SIT_PERD)) {
+            System.out.println("OK");
+        } else {
+            System.out.println("ERREUR");
         }
     }
 
@@ -541,7 +620,7 @@ class Grundy2RecPerdantes {
         while (n <= 25) { // Teste l'efficacité avec un n allant de 3 à 20
             // Reset des variables
             CPT = 0;
-            SIT_PERD = new ArrayList<ArrayList<Integer>>();
+            SIT_PERD.clear();
             jeu.clear();
             jeu.add(n);
 
