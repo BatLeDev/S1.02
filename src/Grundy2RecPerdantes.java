@@ -2,14 +2,14 @@ import java.util.*;
 
 /**
  * Jeu de Grundy2
- * Ce programme ne contient la boucle de jeu « joueur contre machine » en
- * utilisant l'IA. Il contiens également une étude de l'efficacité de la méthode
- * estGagnante.
- * Cette version est brute sans aucune amélioration
+ * Ce programme permet de jouer contre un joueur ou contre un ordinateur
+ * qui cherche a gagner de maniere optimale.
+ * 
+ * Cette version sauvegarde les situations perdantes déja déterminées
+ * avec un test d'efficacité de l'IA qui prends en compte cette amélioration.
  *
  * @author B. GUERNY et J. Perrot
  */
-
 class Grundy2RecPerdantes {
     // Variables globales
     long CPT; // compteur d'appels récursifs

@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 /**
  * Jeu de Grundy2
- * Ce programme ne contient que les méthodes permettant de tester jouerGagnant()
+ * Ce programme ne contient que les methodes permettant de tester jouerGagnant()
  * Cette version est brute sans aucune amélioration
  *
  * @author M. Adam et J-F. Kamp

@@ -2,14 +2,13 @@ import java.util.ArrayList;
 
 /**
  * Jeu de Grundy2
- * Ce programme ne contient la boucle de jeu « joueur contre machine » en
- * utilisant l'IA. Il contiens également une étude de l'efficacité de la méthode
- * estGagnante.
- * Cette version est brute sans aucune amélioration
+ * Ce programme permet de jouer contre un joueur ou contre un ordinateur
+ * qui cherche a gagner de maniere optimale.
+ * 
+ * Cette version contiens un test d'efficacité de l'IA sans aucune amélioration
  *
  * @author B. GUERNY et J. Perrot
  */
-
 class Grundy2RecBruteEff {
     // Variables globales
     long CPT; // compteur d'appels récursifs
