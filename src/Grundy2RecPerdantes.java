@@ -1,5 +1,16 @@
 import java.util.*;
 
+/*
+ * Reflechissons
+ * comment savoir que un tas est perdant ?
+ * le tas 4 est perdant si essai/jeu = [1,2,1,2,4,1,2] <=> [4]
+ * mais est-il perdant si essai/jeu [5,4] ? Oui 4 est toujours perdant
+ * Comment trouver que 4 est perdant lorsque l'on fait [5,4] ?
+ * 
+ * Passer le <=>: c'est la méthode estPossibleUneFois
+ * qui renvoie l'indice du seul tas décomposable, sinon renvoie -1
+ */
+
 /**
  * Jeu de Grundy2
  * Ce programme permet de jouer contre un joueur ou contre un ordinateur
@@ -13,7 +24,8 @@ import java.util.*;
 class Grundy2RecPerdantes {
     // Variables globales
     long CPT; // compteur d'appels récursifs
-    ArrayList<ArrayList<Integer>> SIT_PERD = new ArrayList<ArrayList<Integer>>(); // situations perdantes
+    int NB_ESSAI = 40; // La valeur max de départ pour le test d'efficacité 
+    ArrayList<Integer> SIT_PERD = new ArrayList<Integer>(); // tas perdants
 
     /**
      * Méthode principal du programme
@@ -23,144 +35,24 @@ class Grundy2RecPerdantes {
         // testJouerGagnant();
         // testPremier();
         // testSuivant();
-        // testCleanEssai();
-        // testEstPresent();
-        // testAjouterEssai();
         testJouerGagnantEfficacite();
+        System.err.println(SIT_PERD);
     }
 
-    // TODO: Je trouve les méthodes de test pas jojo a voir mais tempis...
-
     /**
-     * Retire les 1 et les 0 d'un essai et le tri
+     * Enlève les tas de 1 et de 2
      * 
-     * @param essai l'essai a "nettoyer"
-     * @return un tableau contenant uniquement des valeurs > 2
+     * @param jeu plateau de jeu à nettoyer
+     * @return Un nouveau jeu sans les tas de 1 et de 2
      */
-    ArrayList<Integer> cleanEssai(ArrayList<Integer> essai) {
+    ArrayList<Integer> nettoyer(ArrayList<Integer> jeu) {
         ArrayList<Integer> ret = new ArrayList<Integer>();
-        
-        int i = 0;
-        while (i < essai.size()) {
-            if (essai.get(i) > 2) {
-                ret.add(essai.get(i));
+        for (int i = 0; i < jeu.size(); i++) {
+            if (jeu.get(i) > 2) {
+                ret.add(jeu.get(i));
             }
-            i++;
-        }
-        Collections.sort(ret);
-
-        return ret;
-    }
-
-    /**
-     * Test la méthode cleanEssai
-     */
-    void testCleanEssai() {
-        System.out.println("*** testCleanEssai() ***");
-        ArrayList<Integer> essai = new ArrayList<Integer>();
-        essai.add(1);
-        essai.add(3);
-        essai.add(2);
-        essai.add(4);
-        essai.add(5);
-
-        ArrayList<Integer> essaiCleanAtt = new ArrayList<Integer>();
-        essaiCleanAtt.add(3);
-        essaiCleanAtt.add(4);
-        essaiCleanAtt.add(5);
-
-        ArrayList<Integer> essaiClean = cleanEssai(essai);
-        if (essaiClean.equals(essaiCleanAtt)) {
-            System.out.println("OK");
-        } else {
-            System.out.println("ERREUR");
-        }
-    }
-
-    /**
-     * Cherche si un essai trié est dans le tableau des situations perdantes
-     * 
-     * @param essai essai à chercher
-     * @param SitSaved tableau de situations perdantes
-     */
-    boolean estPresent(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> SitSaved) {
-        boolean ret = false;
-        ArrayList<Integer> essaiClean = cleanEssai(essai);
-
-        int i = 0;
-        while (i < SitSaved.size() && !ret) { // Parcours de la liste des situations
-            if (SitSaved.get(i).equals(essaiClean)) { // Si une situation connue corespond a l'essai
-                ret = true;
-            }
-            i++;
         }
         return ret;
-    }
-
-    /**
-     * Test la méthode estPresent
-     */
-    void testEstPresent() {
-        System.out.println("*** testEstPresent() ***");
-        ArrayList<Integer> essai = new ArrayList<Integer>();
-        essai.add(1);
-        essai.add(3);
-        essai.add(2);
-        essai.add(4);
-        essai.add(5);
-
-        ArrayList<Integer> essaiClean = cleanEssai(essai);
-
-        SIT_PERD.clear();
-        if (estPresent(essaiClean, SIT_PERD)) {
-            System.out.println("Element non présent: ERREUR");
-        } else {
-            System.out.println("Element non présent: OK");
-        }
-
-        SIT_PERD.add(essaiClean);
-        if (estPresent(essaiClean, SIT_PERD)) {
-            System.out.println("Element présent: OK");
-        } else {
-            System.out.println("Element présent: ERREUR");
-        }
-    }
-
-    /**
-     * Ajoute un essai trié dans le tableau
-     * 
-     * @param essai    essai à chercher
-     * @param SitSaved tableau de situations perdantes
-     */
-    void ajouterEssai(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> SitSaved) {
-        if (estPossible(essai)) { // Si valeurs > 2
-            if (!estPresent(essai, SitSaved)) {
-                ArrayList<Integer> essaiClean = cleanEssai(essai);
-                SitSaved.add(essaiClean);
-            }
-        }
-    }
-
-    /**
-     * Test la méthode ajouterEssai
-     */
-    void testAjouterEssai() {
-        System.out.println("*** testAjouterEssai() ***");
-        ArrayList<Integer> essai = new ArrayList<Integer>();
-        essai.add(1);
-        essai.add(3);
-        essai.add(2);
-        essai.add(4);
-        essai.add(5);
-
-        SIT_PERD.clear();
-
-        ajouterEssai(essai, SIT_PERD);
-        if (estPresent(essai, SIT_PERD)) {
-            System.out.println("OK");
-        } else {
-            System.out.println("ERREUR");
-        }
     }
 
     /**
@@ -182,18 +74,27 @@ class Grundy2RecPerdantes {
             // décomposition (c-à-d UNE action qui consiste à décomposer un tas en 2 tas
             // inégaux) perdante pour l’adversaire.
             while (ligne != -1 && !gagnant) {
-                if (estPerdante(essai)) {
-
-                    ajouterEssai(essai, SIT_PERD); // On sauvegarde la situation en tant que perdante
-
-                    jeu.clear();
-                    gagnant = true;
-                    for (int i = 0; i < essai.size(); i++) { // on met à jour le jeu
-                        jeu.add(essai.get(i));
+                if (!SIT_PERD.contains(jeu.get(ligne))) { // Si le tas n'est pas dans la liste des tas perdants
+                    if (estPerdante(essai)) {
+                        jeu.clear();
+                        gagnant = true;
+                        for (int i = 0; i < essai.size(); i++) { // on met à jour le jeu
+                            jeu.add(essai.get(i));
+                        }
+                    } else {
+                        ligne = suivant(jeu, essai, ligne);
                     }
                 } else {
                     ligne = suivant(jeu, essai, ligne);
+
                 }
+            }
+        }
+        if (!gagnant) { // Si la méthode n'a touver aucun coup gagnant
+            ArrayList<Integer> jeu_propre = new ArrayList<Integer>();
+            jeu_propre = nettoyer(jeu); // On nettoie le jeu
+            if (jeu_propre.size() == 1 && !SIT_PERD.contains(jeu_propre.get(0))) { // Et que le jeu ne contient qu'un seul tas
+                SIT_PERD.add(jeu_propre.get(0)); // On ajoute le tas au tableau des tas perdants
             }
         }
 
@@ -224,33 +125,26 @@ class Grundy2RecPerdantes {
             }
 
             else {
-                // si la configuration est répertoriée dans la liste des situations perdantes
-                
-                if (estPresent(jeu,SIT_PERD)) { // Si la situaiton est dans la liste des situations perdantes
-                    ret = true;
+                // création d'un jeu d'essais qui va examiner toutes les décompositions
+                // possibles à partir de jeu
+                ArrayList<Integer> essai = new ArrayList<Integer>(); // size = 0
 
-                } else {
-
-                    // création d'un jeu d'essais qui va examiner toutes les décompositions
-                    // possibles à partir de jeu
-                    ArrayList<Integer> essai = new ArrayList<Integer>(); // size = 0
-
-                    // toute première décomposition : enlever 1 allumette au premier tas qui possède
-                    // au moins 3 allumettes, ligne = -1 signifie qu'il n'y a plus de tas d'au moins
-                    // 3 allumettes
-                    int ligne = premier(jeu, essai);
-                    while ((ligne != -1) && ret) {
-                        // mise en oeuvre de la règle numéro1
-                        // Une situation (ou position) est dite perdante pour la machine (ou le joueur,
-                        // peu importe) si et seulement si TOUTES
-                        // ses décompositions possibles (c-à-d TOUTES les actions qui consistent à
-                        // décomposer un tas en 2 tas inégaux) sont
-                        // TOUTES gagnantes pour l’adversaire.
-                        // Si UNE SEULE décomposition (à partir du jeu) est perdante (pour l'adversaire)
-                        // alors la configuration n'EST PAS perdante.
-                        // Ici l'appel à "estPerdante" est RECURSIF.
+                // toute première décomposition : enlever 1 allumette au premier tas qui possède
+                // au moins 3 allumettes, ligne = -1 signifie qu'il n'y a plus de tas d'au moins
+                // 3 allumettes
+                int ligne = premier(jeu, essai);
+                while ((ligne != -1) && ret) {
+                    // mise en oeuvre de la règle numéro1
+                    // Une situation (ou position) est dite perdante pour la machine (ou le joueur,
+                    // peu importe) si et seulement si TOUTES
+                    // ses décompositions possibles (c-à-d TOUTES les actions qui consistent à
+                    // décomposer un tas en 2 tas inégaux) sont
+                    // TOUTES gagnantes pour l’adversaire.
+                    // Si UNE SEULE décomposition (à partir du jeu) est perdante (pour l'adversaire)
+                    // alors la configuration n'EST PAS perdante.
+                    // Ici l'appel à "estPerdante" est RECURSIF.
+                    if (!SIT_PERD.contains(jeu.get(ligne))) {
                         if (estPerdante(essai)) {
-                            ajouterEssai(essai, SIT_PERD); // On sauvegarde la situation en tant que perdante
                             ret = false;
 
                         } else {
@@ -259,9 +153,22 @@ class Grundy2RecPerdantes {
                             // à partir du jeu, si ligne = -1 il n'y a plus de décomposition possible
                             ligne = suivant(jeu, essai, ligne);
                         }
-
-                        CPT++;
+                    } else {
+                        ligne = suivant(jeu, essai, ligne);
+                    
                     }
+                    CPT++;
+                }
+
+            }
+            
+            // TODO Ecrire mieux cette partie
+
+            if (ret) {
+                ArrayList<Integer> jeu_propre = new ArrayList<Integer>();
+                jeu_propre = nettoyer(jeu); // On nettoie le jeu
+                if (jeu_propre.size() == 1 && !SIT_PERD.contains(jeu_propre.get(0))) { // Et que le jeu ne contient qu'un seul tas
+                    SIT_PERD.add(jeu_propre.get(0)); // On ajoute le tas au tableau des tas perdants
                 }
             }
         }
@@ -617,7 +524,7 @@ class Grundy2RecPerdantes {
         int n = 3;
         ArrayList<Integer> jeu = new ArrayList<Integer>();
 
-        while (n <= 25) { // Teste l'efficacité avec un n allant de 3 à 20
+        while (n <= NB_ESSAI) { // Teste l'efficacité avec un n allant de 3 à 20
             // Reset des variables
             CPT = 0;
             SIT_PERD.clear();
