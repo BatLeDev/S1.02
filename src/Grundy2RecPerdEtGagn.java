@@ -5,14 +5,15 @@ import java.util.*;
  * Ce programme permet de jouer contre un joueur ou contre un ordinateur
  * qui cherche a gagner de maniere optimale.
  * 
- * Cette version sauvegarde les situations perdantes et gagnantes deja determinees
+ * Cette version sauvegarde les situations perdantes et gagnantes deja
+ * determinees
  * avec un test d'efficacite de l'IA qui prends en compte cette amelioration.
  *
  * @author B. GUERNY et J. Perrot
  */
 class Grundy2RecPerdEtGagn {
     // Variables globales
-    long CPT; // compteur d'appels 
+    long CPT; // compteur d'appels
     ArrayList<ArrayList<Integer>> SIT_PERD = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> SIT_GAGN = new ArrayList<ArrayList<Integer>>(); // situations perdantes
 
@@ -28,6 +29,7 @@ class Grundy2RecPerdEtGagn {
         // testEstPresent();
         // testAjouterEssai();
         testJouerGagnantEfficacite();
+        System.out.println(SIT_GAGN);
     }
 
     /**
