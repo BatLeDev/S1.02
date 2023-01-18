@@ -27,7 +27,6 @@ class Grundy2RecPerdantes {
         // testEstPresent();
         // testAjouterEssai();
         testJouerGagnantEfficacite();
-        System.out.println(SIT_PERD);
     }
 
     // TODO: Je trouve les méthodes de test pas jojo a voir mais tempis...
@@ -79,19 +78,26 @@ class Grundy2RecPerdantes {
     }
 
     /**
-     * Cherche si un essai trié est dans le tableau des situations perdantes
+     * Cherche si un essai trié est dans le tableau
      * 
      * @param essai    essai à chercher
-     * @param SitSaved tableau de situations perdantes
+     * @param sitSaved tableau de situations perdantes ou gagnantes
      */
-    boolean estPresent(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> SitSaved) {
+    boolean estPresent(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> sitSaved) {
         boolean ret = false;
         ArrayList<Integer> essaiClean = cleanEssai(essai);
 
         int i = 0;
-        while (i < SitSaved.size() && !ret) { // Parcours de la liste des situations
-            if (SitSaved.get(i).equals(essaiClean)) { // Si une situation connue corespond a l'essai
+        while (i < sitSaved.size() && !ret) { // Parcours de la liste des situations
+            if (sitSaved.get(i).size() == essaiClean.size()) {
                 ret = true;
+                int j = 0;
+                while (j < essaiClean.size() && ret) {
+                    if (sitSaved.get(i).get(j) != essaiClean.get(j)) {
+                        ret = false;
+                    }
+                    j++;
+                }
             }
             i++;
         }
@@ -131,13 +137,31 @@ class Grundy2RecPerdantes {
      * Ajoute un essai trié dans le tableau
      * 
      * @param essai    essai à chercher
-     * @param SitSaved tableau de situations perdantes
+     * @param sitSaved tableau de situations perdantes ou gagnantes
      */
-    void ajouterEssai(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> SitSaved) {
+    void ajouterEssai(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> sitSaved) {
         if (estPossible(essai)) { // Si valeurs > 2
-            if (!estPresent(essai, SitSaved)) {
-                ArrayList<Integer> essaiClean = cleanEssai(essai);
-                SitSaved.add(essaiClean);
+            if (!estPresent(essai, sitSaved)) { // Si l'essai n'est pas deja connu
+        
+                ArrayList<Integer> essaiClean = cleanEssai(essai); // On nettoie l'essai
+
+                if (sitSaved.size() == 0) { // Si le tableau est vide on le sauvegarde directement
+                    sitSaved.add(essaiClean);
+                } else { // Sinon on cherche ou le placer
+
+                    // Parcours jusqu'a trouver le premier essai de meme taille
+                    int i = 0;
+                    while (i < sitSaved.size() && sitSaved.get(i).size() < essaiClean.size()) {
+                        i++;
+                    }
+
+                    if (i == sitSaved.size()) { // Si on a pas trouve d'essai de meme taille
+                        sitSaved.add(essaiClean); // On l'ajoute a la fin
+                    } else { // Sinon on l'ajoute avant
+                        sitSaved.add(i, essaiClean);
+                    }
+                }
+
             }
         }
     }
@@ -147,20 +171,51 @@ class Grundy2RecPerdantes {
      */
     void testAjouterEssai() {
         System.out.println("*** testAjouterEssai() ***");
-        ArrayList<Integer> essai = new ArrayList<Integer>();
-        essai.add(1);
-        essai.add(3);
-        essai.add(2);
-        essai.add(4);
-        essai.add(5);
-
         SIT_PERD.clear();
+        boolean error = false;
 
-        ajouterEssai(essai, SIT_PERD);
-        if (estPresent(essai, SIT_PERD)) {
-            System.out.println("OK");
-        } else {
-            System.out.println("ERREUR");
+        // Ajout d'un essai
+        ArrayList<Integer> essai1 = new ArrayList<Integer>();
+        essai1.add(4);
+
+        ArrayList<ArrayList<Integer>> sitSavedAtt = new ArrayList<ArrayList<Integer>>();
+        sitSavedAtt.add(essai1);
+        ajouterEssai(essai1, SIT_PERD);
+        if (!SIT_PERD.equals(sitSavedAtt)) {
+            System.out.println("ERREUR : L'ajout d'un essai d'un seul élément n'a pas fonctionné");
+            error = true;
+        }
+
+        // Ajout d'un essai qui existe deja
+        ajouterEssai(essai1, SIT_PERD);
+        if (!SIT_PERD.equals(sitSavedAtt)) {
+            System.out.println("ERREUR : L'ajout d'un essai d'un seul élément qui existe déjà n'a pas fonctionné");
+            error = true;
+        }
+
+        // Ajout d'un essai de deux éléments
+        ArrayList<Integer> essai2 = new ArrayList<Integer>();
+        essai2.add(3);
+        essai2.add(5);
+        sitSavedAtt.add(essai2);
+        ajouterEssai(essai2, SIT_PERD);
+        if (!SIT_PERD.equals(sitSavedAtt)) {
+            System.out.println("ERREUR : L'ajout d'un essai de deux éléments n'a pas fonctionné");
+            error = true;
+        }
+
+        // Ajout d'un essai d'un élément trié avant un essai de deux éléments
+        ArrayList<Integer> essai3 = new ArrayList<Integer>();
+        essai3.add(5);
+        sitSavedAtt.add(0, essai3);
+        ajouterEssai(essai3, SIT_PERD);
+        if (!SIT_PERD.equals(sitSavedAtt)) {
+            System.out.println("ERREUR : L'ajout d'un essai d'un élément trié avant un essai de deux éléments n'a pas fonctionné");
+            error = true;
+        }
+
+        if (!error) {
+            System.out.println("Tous les tests ont fonctionné");
         }
     }
 
