@@ -2,17 +2,20 @@ import java.util.*;
 
 /**
  * Jeu de Grundy2
- * Ce programme ne contient la boucle de jeu « joueur contre machine » en
- * utilisant l'IA. Il contiens également une étude de l'efficacité de la méthode
- * estGagnante.
- * Cette version est brute sans aucune amélioration
+ * Ce programme permet de jouer contre un joueur ou contre un ordinateur
+ * qui cherche a gagner de maniere optimale.
  *
+ * Cette version sauvegarde les situations perdantes et gagnantes deja
+ * determinees et supprime les tas perdants.
+ * Elle contiens egalement un test d'efficacite de l'IA qui prends en compte
+ * cette amelioration.
+ * 
  * @author B. GUERNY et J. Perrot
  */
-
 class Grundy2RecPerdantNeutre {
     // Variables globales
-    long CPT; // compteur d'appels 
+    long CPT; // compteur d'appels
+    int nbAlluMaxTestEfficacite = 15; // nombre d'allumettes max de départ pour le test d'efficacite
     ArrayList<ArrayList<Integer>> SIT_PERD = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> SIT_GAGN = new ArrayList<ArrayList<Integer>>(); // situations perdantes
 
@@ -21,13 +24,14 @@ class Grundy2RecPerdantNeutre {
      */
     void principal() {
         // partieJoueurOrdinateur();
-        testJouerGagnant();
+        // testJouerGagnant();
         // testPremier();
         // testSuivant();
         // testCleanEssai();
         // testEstPresent();
-        // testAjouterEssai();
+        testAjouterEssai();
         // testJouerGagnantEfficacite();
+        System.out.println(SIT_PERD);
     }
 
     /**
@@ -135,7 +139,41 @@ class Grundy2RecPerdantNeutre {
         if (estPossible(essai)) { // Si valeurs > 2
             if (!estPresent(essai, SitSaved)) {
                 ArrayList<Integer> essaiClean = cleanEssai(essai);
-                SitSaved.add(essaiClean);
+                // TODO : ajouter l'essai dans le tableau au bon endroit
+                // [[4],[3,3],[3,3,4]]
+                if (SitSaved.size() == 0) {
+                    SitSaved.add(essaiClean);
+                } else {
+                    int i = 0;
+                    while (i < SitSaved.size() && SitSaved.get(i).size() < essaiClean.size()) {
+                        i++;
+                    }
+
+                    if (i == SitSaved.size()) {
+                        SitSaved.add(essaiClean);
+                    } else {
+                        boolean added = false;
+                        while (i < SitSaved.size() && SitSaved.get(i).size() == essaiClean.size()) {
+                            int size = essaiClean.size();
+                            int j = 0;
+                            while (j < size && i < SitSaved.size() && !added) {
+                                if (essaiClean.get(j) > SitSaved.get(i).get(j)) {
+                                    i++;
+                                } else if (essaiClean.get(j) < SitSaved.get(i).get(j)) {
+                                    SitSaved.add(i, essaiClean);
+                                    added = true;
+                                } else {
+                                    j++;
+                                }
+                            }
+                            i++;
+                            if (!added) {
+                                SitSaved.add(essaiClean);
+                            }
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -145,20 +183,44 @@ class Grundy2RecPerdantNeutre {
      */
     void testAjouterEssai() {
         System.out.println("*** testAjouterEssai() ***");
-        ArrayList<Integer> essai = new ArrayList<Integer>();
-        essai.add(1);
-        essai.add(3);
-        essai.add(2);
-        essai.add(4);
-        essai.add(5);
+        ArrayList<Integer> essai1 = new ArrayList<Integer>();
+        essai1.add(4);
 
         SIT_PERD.clear();
 
-        ajouterEssai(essai, SIT_PERD);
-        if (estPresent(essai, SIT_PERD)) {
+        ajouterEssai(essai1, SIT_PERD);
+        if (estPresent(essai1, SIT_PERD)) {
             System.out.println("OK");
         } else {
-            System.out.println("ERREUR");
+            System.out.println("ERREUR : L'ajout d'un essai d'un seul élément n'a pas fonctionné");
+        }
+
+        ArrayList<Integer> essai2 = new ArrayList<Integer>();
+        essai2.add(3);
+        essai2.add(3);
+
+        ajouterEssai(essai2, SIT_PERD);
+        if (estPresent(essai2, SIT_PERD)) {
+            System.out.println("OK");
+        } else {
+            System.out.println("ERREUR : L'ajout d'un essai de deux éléments n'a pas fonctionné");
+        }
+
+        ArrayList<Integer> essai3 = new ArrayList<Integer>();
+        essai3.add(3);
+        essai3.add(4);
+
+        ajouterEssai(essai3, SIT_PERD);
+
+        ArrayList<ArrayList<Integer>> SitSavedAtt = new ArrayList<ArrayList<Integer>>();
+        SitSavedAtt.add(essai1);
+        SitSavedAtt.add(essai2);
+        SitSavedAtt.add(essai3);
+
+        if (SIT_PERD.equals(SitSavedAtt)) {
+            System.out.println("OK");
+        } else {
+            System.out.println("ERREUR : L'ajout d'un essai de deux éléments a la bonne position n'a pas fonctionné");
         }
     }
 
@@ -618,7 +680,7 @@ class Grundy2RecPerdantNeutre {
         int n = 3;
         ArrayList<Integer> jeu = new ArrayList<Integer>();
 
-        while (n <= 35) { // Teste l'efficacité avec un n allant de 3 à 20
+        while (n <= nbAlluMaxTestEfficacite) { // Teste l'efficacité avec un n allant de 3 à nbAlluMaxTestEfficacite
             // Reset des variables
             CPT = 0;
             SIT_PERD.clear();

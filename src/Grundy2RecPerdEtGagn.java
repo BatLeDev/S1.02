@@ -6,8 +6,8 @@ import java.util.*;
  * qui cherche a gagner de maniere optimale.
  * 
  * Cette version sauvegarde les situations perdantes et gagnantes deja
- * determinees
- * avec un test d'efficacite de l'IA qui prends en compte cette amelioration.
+ * determinees avec un test d'efficacite de l'IA qui prends en compte 
+ * cette amelioration.
  *
  * @author B. GUERNY et J. Perrot
  */
