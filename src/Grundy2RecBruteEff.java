@@ -1,23 +1,26 @@
 import java.util.ArrayList;
 
 /**
- * Jeu de Grundy2
- * Ce programme permet de jouer contre un joueur ou contre un ordinateur
- * qui cherche a gagner de maniere optimale.
+ * Game of Grundy2
  * 
- * Cette version contiens un test d'efficacité de l'IA sans aucune amélioration
+ * This program makes it possible to play versus the computer which seeks to
+ * gain in an optimal way.
+ * 
+ * This version contains :
+ * - the AI that shearch the winning move
+ * - a test of efficiency of the AI
  *
  * @author B. GUERNY et J. Perrot
  */
 class Grundy2RecBruteEff {
     // Variables globales
-    long CPT; // compteur d'appels récursifs
+    long cpt; // compteur d'appels récursifs
 
     /**
-     * Méthode principal du programme
+     * Main method
      */
     void principal() {
-        // partieJoueurOrdinateur();
+        // joueurContreMachine();
         // testJouerGagnant();
         // testPremier();
         // testSuivant();
@@ -25,10 +28,10 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Joue le coup gagnant s'il existe
+     * Play the winning move if it exists
      * 
-     * @param jeu plateau de jeu
-     * @return vrai s'il y a un coup gagnant, faux sinon
+     * @param jeu the game board
+     * @return true if there is a winning move, false otherwise
      */
     boolean jouerGagnant(ArrayList<Integer> jeu) {
         boolean gagnant = false;
@@ -59,22 +62,19 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Méthode RECURSIVE qui indique si la configuration (du jeu actuel ou jeu
-     * d'essai) est perdante
+     * RECURSIVE method that indicates if the configuration (of the current game or
+     * try game) is losing
      * 
-     * @param jeu plateau de jeu actuel (l'état du jeu à un certain moment au cours
-     *            de la partie)
-     * @return vrai si la configuration (du jeu) est perdante, faux sinon
+     * @param jeu actual game board
+     * @return true if the configuration is losing, false otherwise
      */
     boolean estPerdante(ArrayList<Integer> jeu) {
-
         boolean ret = true; // par défaut la configuration est perdante
 
         if (jeu == null) {
             System.err.println("estPerdante(): le paramètre jeu est null");
-        }
+        } else {
 
-        else {
             // si il n'y a plus que des tas de 1 ou 2 allumettes dans le plateau de jeu
             // alors la situation est forcément perdante (ret=true) = FIN de la récursivité
             if (!estPossible(jeu)) {
@@ -91,6 +91,7 @@ class Grundy2RecBruteEff {
                 // 3 allumettes
                 int ligne = premier(jeu, essai);
                 while ((ligne != -1) && ret) {
+
                     // mise en oeuvre de la règle numéro1
                     // Une situation (ou position) est dite perdante pour la machine (ou le joueur,
                     // peu importe) si et seulement si TOUTES
@@ -100,7 +101,7 @@ class Grundy2RecBruteEff {
                     // Si UNE SEULE décomposition (à partir du jeu) est perdante (pour l'adversaire)
                     // alors la configuration n'EST PAS perdante.
                     // Ici l'appel à "estPerdante" est RECURSIF.
-                    if (estPerdante(essai) == true) {
+                    if (estPerdante(essai)) {
 
                         ret = false;
 
@@ -110,8 +111,8 @@ class Grundy2RecBruteEff {
                         // à partir du jeu, si ligne = -1 il n'y a plus de décomposition possible
                         ligne = suivant(jeu, essai, ligne);
                     }
-
-                    CPT++;
+                    
+                    cpt++; // compteur de récursivité pour le test d'efficacite
                 }
             }
         }
@@ -120,7 +121,7 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Tests succincts de la méthode joueurGagnant()
+     * Short tests of the method joueurGagnant()
      */
     void testJouerGagnant() {
         System.out.println();
@@ -134,15 +135,14 @@ class Grundy2RecBruteEff {
         resJeu1.add(2);
 
         testCasJouerGagnant(jeu1, resJeu1, true);
-
     }
 
     /**
-     * Test d'un cas de la méthode jouerGagnant()
+     * Test of a case of the method jouerGagnant()
      *
-     * @param jeu    le plateau de jeu
-     * @param resJeu le plateau de jeu après avoir joué gagnant
-     * @param res    le résultat attendu par jouerGagnant
+     * @param jeu    the game board
+     * @param resJeu the expected result after jouerGagnant()
+     * @param res    the expected result of jouerGagnant()
      */
     void testCasJouerGagnant(ArrayList<Integer> jeu, ArrayList<Integer> resJeu, boolean res) {
         // Arrange
@@ -161,11 +161,11 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Divise en deux tas les alumettes d'une ligne de jeu (1 ligne = 1 tas)
+     * Divide the matches of a line of play into two piles (1 line = 1 pile)
      * 
-     * @param jeu   tableau des alumettes par ligne
-     * @param ligne ligne (tas) sur laquelle les alumettes doivent être séparées
-     * @param nb    nombre d'alumettes RETIREE de la ligne après séparation
+     * @param jeu   game board
+     * @param ligne line (pile) on which matches should be separated
+     * @param nb    number of matches REMOVE from line after separation
      */
     void enlever(ArrayList<Integer> jeu, int ligne, int nb) {
         // traitement des erreurs
@@ -189,10 +189,10 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Teste s'il est possible de séparer un des tas
+     * Try if it is possible to separate the matches of a line 
      * 
-     * @param jeu plateau de jeu
-     * @return vrai s'il existe au moins un tas de 3 allumettes ou plus, faux sinon
+     * @param jeu  game board
+     * @return true if it is possible to separate the matches of a line
      */
     boolean estPossible(ArrayList<Integer> jeu) {
         boolean ret = false;
@@ -211,12 +211,12 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Crée une toute première configuration d'essai à partir du jeu
+     * Create a first configuration of try from the game
      * 
-     * @param jeu      plateau de jeu
-     * @param jeuEssai nouvelle configuration du jeu
-     * @return le numéro du tas divisé en deux ou (-1) si il n'y a pas de tas d'au
-     *         moins 3 allumettes
+     * @param jeu      game board
+     * @param jeuEssai new try game board
+     * @return the number of the pile divided into two or (-1) if there is no pile 
+     *         of at least 3 matches
      */
     int premier(ArrayList<Integer> jeu, ArrayList<Integer> jeuEssai) {
 
@@ -268,7 +268,7 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Tests succincts de la méthode premier()
+     * Short tests of the method premier()
      */
     void testPremier() {
         System.out.println();
@@ -286,11 +286,11 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Test un cas de la méthode testPremier
+     * Test a case of the method testPremier()
      * 
-     * @param jeu   le plateau de jeu
-     * @param ligne le numéro du tas séparé en premier
-     * @param res   le plateau de jeu après une première séparation
+     * @param jeu   the game board
+     * @param ligne the index of the first separated pile
+     * @param res   the expected result
      */
     void testCasPremier(ArrayList<Integer> jeu, int ligne, ArrayList<Integer> res) {
         // Arrange
@@ -308,14 +308,13 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Génère la configuration d'essai suivante (c'est-à-dire UNE décomposition
-     * possible)
+     * Generates the following try setup (i.e. ONE possible decomposition)
      * 
-     * @param jeu      plateau de jeu
-     * @param jeuEssai configuration d'essai du jeu après séparation
-     * @param ligne    le numéro du tas qui est le dernier à avoir été séparé
-     * @return le numéro du tas divisé en deux pour la nouvelle configuration, -1 si
-     *         plus aucune décomposition n'est possible
+     * @param jeu      game board
+     * @param jeuEssai try game board after the decomposition
+     * @param ligne    index of the last pile to be divided
+     * @return the index of the pile divided in two for the new configuration, 
+     *         -1 if no more decomposition is possible
      */
     int suivant(ArrayList<Integer> jeu, ArrayList<Integer> jeuEssai, int ligne) {
 
@@ -382,7 +381,7 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Tests succincts de la méthode suivant()
+     * Short tests of the method suivant()
      */
     void testSuivant() {
         System.out.println();
@@ -432,13 +431,13 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Test un cas de la méthode suivant
+     * Test a case of the method suivant()
      * 
-     * @param jeu      le plateau de jeu
-     * @param jeuEssai le plateau de jeu obtenu après avoir séparé un tas
-     * @param ligne    le numéro du tas qui est le dernier à avoir été séparé
-     * @param resJeu   est le jeuEssai attendu après séparation
-     * @param resLigne est le numéro attendu du tas qui est séparé
+     * @param jeu      game board
+     * @param jeuEssai game board after one separation
+     * @param ligne    the index of the line that is last separated
+     * @param resJeu   is the jeuEssai expected after separation
+     * @param resLigne is the index expected from the pile which is separated
      */
     void testCasSuivant(ArrayList<Integer> jeu, ArrayList<Integer> jeuEssai, int ligne, ArrayList<Integer> resJeu,
             int resLigne) {
@@ -456,7 +455,7 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Tests d'efficacité de la méthode jouerGagnant()
+     * efficiency test method of jouerGagnant()
      */
     void testJouerGagnantEfficacite() {
         System.out.println();
@@ -467,8 +466,9 @@ class Grundy2RecBruteEff {
         int n = 3;
         ArrayList<Integer> jeu = new ArrayList<Integer>();
 
-        while (n <= 20) { // Teste l'efficacité avec un n allant de 3 à 20
-            CPT = 0;
+        while (n <= 25) { // Teste l'efficacité avec un n allant de 3 à 20
+            // Reset des variables
+            cpt = 0;
             jeu.clear();
             jeu.add(n);
 
@@ -478,15 +478,15 @@ class Grundy2RecBruteEff {
             ms = (fin - debut) / 1000000;
 
             System.out
-                    .println("Pour n = " + n + ": \tTemps d'exécution = " + ms + " ms \tCompteur = " + CPT);
+                    .println("Pour n = " + n + ": \tTemps d'exécution = " + ms + " ms \tCompteur = " + cpt);
             n++;
         }
     }
 
     /**
-     * Affiche le plateau de jeu
+     * Show the game board
      * 
-     * @param plateau  le plateau du jeu
+     * @param plateau game board
      */
     void afficherPlateau(ArrayList<Integer> plateau) {
         int taille = plateau.size();
@@ -502,15 +502,14 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Tour du joueur :
-     * - Demande la ligne à jouer
-     * - Demande le nombre de tas à séparer
-     * Separe les tas
+     * Player turn:
+     * - Asks the line to play
+     * - Asks for the number to withdraw
+     * - Separate the piles
      * 
-     * @param plateau tableau du jeu
+     * @param plateau game board
      */
     void tourJoueur(ArrayList<Integer> plateau) {
-
         // Cherche si il y a une seul ligne jouable la choisir auto, sinon la demander
         int ligne = 0; // La ligne a jouer
         int nbLigneJouable = 0;
@@ -544,11 +543,11 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Tour de l'ordinateur :
-     * - Joue gagnant si possible
-     * - Joue aléatoirement sinon
+     * Computer turn:
+     * - Play winner if possible
+     * - Plays randomly otherwise
      * 
-     * @param plateau tableau du jeu
+     * @param plateau game board
      */
     void tourOrdinateur(ArrayList<Integer> plateau) {
         boolean coupGagnant = jouerGagnant(plateau);
@@ -568,13 +567,18 @@ class Grundy2RecBruteEff {
     }
 
     /**
-     * Initialise la partie
-     * Fait jouer tour à tour l'ordinateur et le joueur.
-     * S'arrete lorsqu'il y a un gagnant et l'affiche.
+     * Initialize the game
+     * Makes the computer and the player play alternately.
+     * Stops when there is a winner and displays it.
      */
-    void partieJoueurOrdinateur() {
+    void joueurContreMachine() {
         String nomJoueur = SimpleInput.getString("Nom du joueur : ");
+
         int nbAllumettes = SimpleInput.getInt("Nombre d'allumettes : ");
+        while (nbAllumettes <= 2) {
+            nbAllumettes = SimpleInput.getInt("Nombre d'allumettes : ");
+        }
+
         boolean tourJoueur = SimpleInput.getBoolean("Voulez vous commencer ? (true/false) : ");
 
         ArrayList<Integer> plateau = new ArrayList<Integer>();

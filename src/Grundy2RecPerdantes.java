@@ -23,14 +23,14 @@ class Grundy2RecPerdantes {
      * Main method
      */
     void principal() {
-        joueurContreMachine();
+        // joueurContreMachine();
         // testJouerGagnant();
         // testPremier();
         // testSuivant();
         // testSimplifier();
         // testEstConnu();
         // testAjouterEssai();
-        // testJouerGagnantEfficacite();
+        testJouerGagnantEfficacite();
     }
 
     /**
@@ -200,7 +200,7 @@ class Grundy2RecPerdantes {
 
                     jeu.clear();
                     gagnant = true;
-                    for (int i = 0; i < essai.size(); i++) { // on met à jour le jeu
+                    for (int i = 0; i < essai.size(); i++) {
                         jeu.add(essai.get(i));
                     }
                 } else {
@@ -323,7 +323,6 @@ class Grundy2RecPerdantes {
     /**
      * Divide the matches of a line of play into two piles (1 line = 1 pile)
      * 
-     * 
      * @param jeu   game board
      * @param ligne line (pile) on which matches should be separated
      * @param nb    number of matches REMOVE from line after separation
@@ -430,7 +429,6 @@ class Grundy2RecPerdantes {
 
     /**
      * Short tests of the method premier()
-     * 
      */
     void testPremier() {
         System.out.println();
