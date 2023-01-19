@@ -15,7 +15,8 @@ import java.util.*;
 class Grundy2RecGplusGequalsP {
     // Variables globales
     long CPT; // compteur d'appels
-    int nbAlluMaxTestEfficacite = 50; // nombre d'allumettes max de départ pour le test d'efficacite
+    int nbAlluMaxTestEfficacite = 52; // nombre d'allumettes max de départ pour le test d'efficacite
+    int [] type = {0,0,0,1,0,2,1,0,2,1,0,2,1,3,2,1,3,2,4,3,0,4,3,0,4,3,0,4,1,2,3,1,2,4,1,2,4,1,2,4,1,5,4,1,5,4,1,5,4,1,0};
     ArrayList<ArrayList<Integer>> SIT_PERD = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> SIT_GAGN = new ArrayList<ArrayList<Integer>>(); // situations perdantes
 
@@ -30,7 +31,7 @@ class Grundy2RecGplusGequalsP {
         //testCleanEssai();
         // testEstPresent();
         // testAjouterEssai();
-        //testJouerGagnantEfficacite();
+        testJouerGagnantEfficacite();
         System.out.println(SIT_PERD);
     }
 
@@ -45,71 +46,118 @@ class Grundy2RecGplusGequalsP {
         boolean unPerdant = false;
         boolean unGagnant = false;
         boolean unNeutre = false;
-        int [] type = {0,0,0,1,0,2,1,0,2,1,0,2,1,3,2,1,3,2,4,3,0,4,3,0,4,3,0,4,1,2,3,1,2,4,1,2,4,1,2,4,1,5,4,1,5,4,1,5,4,1,0};
         ArrayList<Integer> tmp = new ArrayList<Integer>();
 
         int i = 0;
-        while (i < essai.size()) {
-            ArrayList<Integer> tas = new ArrayList<Integer>();
-            tas.add(essai.get(i));
-            if (estPresent(tas, SIT_GAGN)) {
-                unGagnant = true;
-                tmp.add(type[essai.get(i)]);
-            } else if (estPresent(tas, SIT_PERD)) {
-                unPerdant = true;
-            } else {
-                unNeutre = true;
-            }
-            i++;
+        int lg = 0;
+        for (int k = 0; k < essai.size(); k ++){
+            lg = lg + 1;
         }
+        System.out.println(lg);
+        if (lg <= type.length) {
+            while (i < essai.size()) {
+                ArrayList<Integer> tas = new ArrayList<Integer>();
+                tas.add(essai.get(i));
+                if (estPresent(tas, SIT_GAGN)) {
+                    unGagnant = true;
+                    tmp.add(type[essai.get(i)]);
+                } else if (estPresent(tas, SIT_PERD)) {
+                    unPerdant = true;
+                } else {
+                    unNeutre = true;
+                }
+                i++;
+            }
 
-        if (unPerdant) {
-            if (!unGagnant && !unNeutre) { // Pas de gagnant et pas de neutre
-                ret = new ArrayList<Integer>();
-                ret.add(1);
-            } else {
-                if (unGagnant || unNeutre) { // On retire tous les perdants et les < 2
+            if (unPerdant) {
+                if (!unGagnant && !unNeutre) { // Pas de gagnant et pas de neutre
                     ret = new ArrayList<Integer>();
-                    i = 0;
-                    while (i < essai.size()) {
-                        ArrayList<Integer> tas = new ArrayList<Integer>();
-                        tas.add(essai.get(i));
-                        if (!estPresent(tas, SIT_PERD) && essai.get(i) > 2) {
-                            ret.add(essai.get(i));
+                    ret.add(1);
+                } else {
+                    if (unGagnant || unNeutre) { // On retire tous les perdants et les < 2
+                        ret = new ArrayList<Integer>();
+                        i = 0;
+                        while (i < essai.size()) {
+                            ArrayList<Integer> tas = new ArrayList<Integer>();
+                            tas.add(essai.get(i));
+                            if (!estPresent(tas, SIT_PERD) && essai.get(i) > 2) {
+                                ret.add(essai.get(i));
+                            }
+                            i++;
                         }
-                        i++;
+                    }
+                }
+            } else {
+                i = 0;
+                int j = 1;
+                boolean diff = true;
+                while (i < tmp.size() && !diff) {
+                    while (j < tmp.size() && !diff){
+                        if (tmp.get(i) == tmp.get(j)){
+                            diff = true;
+                        } else {
+                            j ++;
+                        }
+                    }
+                    i ++;
+                }
+                if (diff == false) { // deux gagnants dans la meme composition donc composition perdante
+                    ret = new ArrayList<Integer>();
+                    ret.add(1);
+                } else {
+                    if (unPerdant || unNeutre) { // On retire les < 2
+                        ret = new ArrayList<Integer>();
+                        i = 0;
+                        while (i < essai.size()) {
+                            ArrayList<Integer> tas = new ArrayList<Integer>();
+                            tas.add(essai.get(i));
+                            if (!estPresent(tas, SIT_PERD) && essai.get(i) > 2) {
+                                ret.add(essai.get(i));
+                            }
+                            i++;
+                        }
                     }
                 }
             }
         } else {
-            i = 0;
-            int j = 1;
-            boolean diff = true;
-            while (i < tmp.size() && !diff) {
-                while (j < tmp.size() && !diff){
-                    if (tmp.get(i) == tmp.get(j)){
-                        diff = true;
-                    } else {
-                        j ++;
+            while (i < essai.size()) {
+                ArrayList<Integer> tas = new ArrayList<Integer>();
+                tas.add(essai.get(i));
+                if (estPresent(tas, SIT_GAGN)) {
+                    unGagnant = true;
+                } else if (estPresent(tas, SIT_PERD)) {
+                    unPerdant = true;
+                } else {
+                    unNeutre = true;
+                }
+                i++;
+            }
+            if (unPerdant) {
+                if (!unGagnant && !unNeutre) { // Pas de gagnant et pas de neutre
+                    ret = new ArrayList<Integer>();
+                    ret.add(1);
+                } else {
+                    if (unGagnant || unNeutre) { // On retire tous les perdants et les < 2
+                        ret = new ArrayList<Integer>();
+                        i = 0;
+                        while (i < essai.size()) {
+                            ArrayList<Integer> tas = new ArrayList<Integer>();
+                            tas.add(essai.get(i));
+                            if (!estPresent(tas, SIT_PERD) && essai.get(i) > 2) {
+                                ret.add(essai.get(i));
+                            }
+                            i++;
+                        }
                     }
                 }
-                i ++;
-            }
-            if (diff == false) { // deux gagnants dans la meme composition donc composition perdante
-                ret = new ArrayList<Integer>();
-                ret.add(1);
             } else {
-                if (unPerdant || unNeutre) { // On retire les < 2
-                    ret = new ArrayList<Integer>();
-                    i = 0;
-                    while (i < essai.size()) {
-                        ArrayList<Integer> tas = new ArrayList<Integer>();
-                        tas.add(essai.get(i));
-                        if (!estPresent(tas, SIT_PERD) && essai.get(i) > 2) {
-                            ret.add(essai.get(i));
-                        }
-                        i++;
+                ret = new ArrayList<Integer>();
+                i = 0;
+                while (i < essai.size()) {
+                    if (essai.get(i) > 2) {
+                        ret.add(essai.get(i));
                     }
+                    i++;
                 }
             }
         }
