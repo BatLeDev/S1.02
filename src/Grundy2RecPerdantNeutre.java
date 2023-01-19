@@ -15,7 +15,7 @@ import java.util.*;
 class Grundy2RecPerdantNeutre {
     // Variables globales
     long CPT; // compteur d'appels
-    int nbAlluMaxTestEfficacite = 15; // nombre d'allumettes max de départ pour le test d'efficacite
+    int nbAlluMaxTestEfficacite = 54; // nombre d'allumettes max de départ pour le test d'efficacite
     ArrayList<ArrayList<Integer>> SIT_PERD = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> SIT_GAGN = new ArrayList<ArrayList<Integer>>(); // situations perdantes
 
@@ -31,6 +31,7 @@ class Grundy2RecPerdantNeutre {
         // testEstPresent();
         // testAjouterEssai();
         testJouerGagnantEfficacite();
+        System.out.println(SIT_PERD);
     }
 
     /**
@@ -41,16 +42,53 @@ class Grundy2RecPerdantNeutre {
      */
     ArrayList<Integer> cleanEssai(ArrayList<Integer> essai) {
         ArrayList<Integer> ret = new ArrayList<Integer>();
+        boolean unPerdant = false;
+        boolean unGagnant = false;
+        boolean unNeutre = false;
 
         int i = 0;
         while (i < essai.size()) {
-            if (essai.get(i) > 2) {
-                ret.add(essai.get(i));
+            ArrayList<Integer> tas = new ArrayList<Integer>();
+            tas.add(essai.get(i));
+            if (estPresent(tas, SIT_GAGN)) {
+                unGagnant = true;
+            } else if (estPresent(tas, SIT_PERD)) {
+                unPerdant = true;
+            } else {
+                unNeutre = true;
             }
             i++;
         }
-        Collections.sort(ret);
 
+        if (unPerdant) {
+            if (!unGagnant && !unNeutre) { // Pas de gagnant et pas de neutre
+                ret = new ArrayList<Integer>();
+                ret.add(1);
+            } else {
+                if (unGagnant || unNeutre) { // On retire tous les perdants et les < 2
+                    ret = new ArrayList<Integer>();
+                    i = 0;
+                    while (i < essai.size()) {
+                        ArrayList<Integer> tas = new ArrayList<Integer>();
+                        tas.add(essai.get(i));
+                        if (!estPresent(tas, SIT_PERD) && essai.get(i) > 2) {
+                            ret.add(essai.get(i));
+                        }
+                        i++;
+                    }
+                }
+            }
+        } else {
+            ret = new ArrayList<Integer>();
+            i = 0;
+            while (i < essai.size()) {
+                if (essai.get(i) > 2) {
+                    ret.add(essai.get(i));
+                }
+                i++;
+            }
+        }
+        Collections.sort(ret);
         return ret;
     }
 
@@ -87,15 +125,14 @@ class Grundy2RecPerdantNeutre {
      */
     boolean estPresent(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> sitSaved) {
         boolean ret = false;
-        ArrayList<Integer> essaiClean = cleanEssai(essai);
 
         int i = 0;
         while (i < sitSaved.size() && !ret) { // Parcours de la liste des situations
-            if (sitSaved.get(i).size() == essaiClean.size()) {
+            if (sitSaved.get(i).size() == essai.size()) {
                 ret = true;
                 int j = 0;
-                while (j < essaiClean.size() && ret) {
-                    if (sitSaved.get(i).get(j) != essaiClean.get(j)) {
+                while (j < essai.size() && ret) {
+                    if (sitSaved.get(i).get(j) != essai.get(j)) {
                         ret = false;
                     }
                     j++;
@@ -103,6 +140,7 @@ class Grundy2RecPerdantNeutre {
             }
             i++;
         }
+
         return ret;
     }
 
@@ -142,11 +180,9 @@ class Grundy2RecPerdantNeutre {
      * @param sitSaved tableau de situations perdantes ou gagnantes
      */
     void ajouterEssai(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> sitSaved) {
-        if (estPossible(essai)) { // Si valeurs > 2
-            if (!estPresent(essai, sitSaved)) { // Si l'essai n'est pas deja connu
-        
-                ArrayList<Integer> essaiClean = cleanEssai(essai); // On nettoie l'essai
-
+        ArrayList<Integer> essaiClean = cleanEssai(essai); // On nettoie l'essai
+        if (estPossible(essaiClean)) { // Si valeurs > 2
+            if (!estPresent(essaiClean, sitSaved)) { // Si l'essai n'est pas deja connu
                 if (sitSaved.size() == 0) { // Si le tableau est vide on le sauvegarde directement
                     sitSaved.add(essaiClean);
                 } else { // Sinon on cherche ou le placer
@@ -163,7 +199,6 @@ class Grundy2RecPerdantNeutre {
                         sitSaved.add(i, essaiClean);
                     }
                 }
-
             }
         }
     }
@@ -212,7 +247,8 @@ class Grundy2RecPerdantNeutre {
         sitSavedAtt.add(0, essai3);
         ajouterEssai(essai3, SIT_PERD);
         if (!SIT_PERD.equals(sitSavedAtt)) {
-            System.out.println("ERREUR : L'ajout d'un essai d'un élément trié avant un essai de deux éléments n'a pas fonctionné");
+            System.out.println(
+                    "ERREUR : L'ajout d'un essai d'un élément trié avant un essai de deux éléments n'a pas fonctionné");
             error = true;
         }
 
@@ -240,8 +276,10 @@ class Grundy2RecPerdantNeutre {
             // décomposition (c-à-d UNE action qui consiste à décomposer un tas en 2 tas
             // inégaux) perdante pour l’adversaire.
             while (ligne != -1 && !gagnant) {
-                if (estPerdante(essai)) {
-                    ajouterEssai(essai, SIT_PERD); // On sauvegarde la situation en tant que perdante
+                ArrayList<Integer> essaiClean = cleanEssai(essai);
+
+                if (estPerdante(essaiClean)) {
+                    ajouterEssai(essaiClean, SIT_PERD); // On sauvegarde la situation en tant que perdante
 
                     jeu.clear();
                     gagnant = true;
@@ -266,7 +304,6 @@ class Grundy2RecPerdantNeutre {
      * @return vrai si la configuration (du jeu) est perdante, faux sinon
      */
     boolean estPerdante(ArrayList<Integer> jeu) {
-
         boolean ret = true; // par défaut la configuration est perdante
 
         if (jeu == null) {
@@ -278,10 +315,8 @@ class Grundy2RecPerdantNeutre {
             // alors la situation est forcément perdante (ret=true) = FIN de la récursivité
             if (!estPossible(jeu)) {
                 ret = true;
-            }
+            } else {
 
-            else {
-                // si la configuration est répertoriée dans la liste des situations perdantes
                 if (estPresent(jeu, SIT_GAGN)) { // Si la situaiton est dans la liste des situations gagnantes
                     ret = false;
                 } else {
@@ -308,8 +343,11 @@ class Grundy2RecPerdantNeutre {
                             // Si UNE SEULE décomposition (à partir du jeu) est perdante (pour l'adversaire)
                             // alors la configuration n'EST PAS perdante.
                             // Ici l'appel à "estPerdante" est RECURSIF.
-                            if (estPerdante(essai)) {
-                                ajouterEssai(essai, SIT_PERD); // On sauvegarde l'essai en tant que perdante
+
+                            ArrayList<Integer> essaiClean = cleanEssai(essai);
+
+                            if (estPerdante(essaiClean)) {
+                                ajouterEssai(essaiClean, SIT_PERD); // On sauvegarde l'essai en tant que perdant
                                 ajouterEssai(jeu, SIT_GAGN); // On sauvegarde le jeu en tant que gagnant
                                 ret = false;
                             } else {

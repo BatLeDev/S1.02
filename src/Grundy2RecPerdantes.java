@@ -280,8 +280,6 @@ class Grundy2RecPerdantes {
             }
 
             else {
-                // si la configuration est répertoriée dans la liste des situations perdantes
-
                 if (estPresent(jeu, SIT_PERD)) { // Si la situaiton est dans la liste des situations perdantes
                     ret = true;
 
