@@ -15,6 +15,7 @@ import java.util.ArrayList;
 class Grundy2RecBruteEff {
     // Variables globales
     long cpt; // compteur d'appels récursifs
+    int NB_MAX_EFFI = 20; // nombre d'allumettes max pour le test d'efficacite
 
     /**
      * Main method
@@ -466,7 +467,7 @@ class Grundy2RecBruteEff {
         int n = 3;
         ArrayList<Integer> jeu = new ArrayList<Integer>();
 
-        while (n <= 25) { // Teste l'efficacité avec un n allant de 3 à 20
+        while (n <= NB_MAX_EFFI) { // Teste l'efficacité avec un n allant de 3 à NB_MAX_EFFI
             // Reset des variables
             cpt = 0;
             jeu.clear();
