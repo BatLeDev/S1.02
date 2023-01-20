@@ -18,7 +18,7 @@ import java.util.*;
 class Grundy2RecPerdantNeutre {
     // Variables globales
     long cpt; // compteur d'appels récursifs
-    int NB_MAX_EFFI = 40; // nombre d'allumettes max pour le test d'efficacite
+    int NB_MAX_EFFI = 45; // nombre d'allumettes max pour le test d'efficacite
     ArrayList<ArrayList<Integer>> posPerdantes = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> posGagnantes = new ArrayList<ArrayList<Integer>>(); // situations perdantes
 
@@ -48,8 +48,10 @@ class Grundy2RecPerdantNeutre {
         boolean unGagnant = false;
         boolean unNeutre = false;
 
+        // Première passe qui analyse le contenu de l'essai
+
         int i = 0;
-        while (i < essai.size()) {
+        while (i < essai.size() && !(unPerdant && (unGagnant || unNeutre))) {
             ArrayList<Integer> tas = new ArrayList<Integer>();
             tas.add(essai.get(i));
             if (estConnu(tas, posGagnantes)) {
@@ -62,26 +64,22 @@ class Grundy2RecPerdantNeutre {
             i++;
         }
 
-        if (unPerdant) {
-            if (!unGagnant && !unNeutre) { // Pas de gagnant et pas de neutre
-                ret = new ArrayList<Integer>();
-                ret.add(1);
-            } else {
-                if (unGagnant || unNeutre) { // On retire tous les perdants et les < 2
-                    ret = new ArrayList<Integer>();
-                    i = 0;
-                    while (i < essai.size()) {
-                        ArrayList<Integer> tas = new ArrayList<Integer>();
-                        tas.add(essai.get(i));
-                        if (!estConnu(tas, posPerdantes) && essai.get(i) > 2) {
-                            ret.add(essai.get(i));
-                        }
-                        i++;
+        // Deuxième passe qui supprime les tas perdants
+        if (unPerdant) { // Si on a au moins un perdant, on les supprimes tous
+            if (unGagnant || unNeutre) { // On retire tous les perdants et les < 2
+                i = 0;
+                while (i < essai.size()) {
+                    ArrayList<Integer> tas = new ArrayList<Integer>();
+                    tas.add(essai.get(i));
+                    if (!estConnu(tas, posPerdantes) && essai.get(i) > 2) {
+                        ret.add(essai.get(i));
                     }
+                    i++;
                 }
+            } else { // Si on a que des perdants, on garde le 1
+                ret.add(1);
             }
         } else {
-            ret = new ArrayList<Integer>();
             i = 0;
             while (i < essai.size()) {
                 if (essai.get(i) > 2) {
