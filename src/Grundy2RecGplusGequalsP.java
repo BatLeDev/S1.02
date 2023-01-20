@@ -9,13 +9,14 @@ import java.util.*;
  * determinees, supprime les tas perdants et simplifie les tas gagnants
  * Elle contiens egalement un test d'efficacite de l'IA qui prends en compte
  * cette amelioration.
- * 
+ *
  * @author B. GUERNY et J. Perrot
  */
 class Grundy2RecGplusGequalsP {
     // Variables globales
     long CPT; // compteur d'appels
-    int nbAlluMaxTestEfficacite = 52; // nombre d'allumettes max de départ pour le test d'efficacite
+    int lg = 0;
+    int nbAlluMaxTestEfficacite = 54; // nombre d'allumettes max de départ pour le test d'efficacite
     int [] type = {0,0,0,1,0,2,1,0,2,1,0,2,1,3,2,1,3,2,4,3,0,4,3,0,4,3,0,4,1,2,3,1,2,4,1,2,4,1,2,4,1,5,4,1,5,4,1,5,4,1,0};
     ArrayList<ArrayList<Integer>> SIT_PERD = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> SIT_GAGN = new ArrayList<ArrayList<Integer>>(); // situations perdantes
@@ -37,7 +38,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Retire les 1 et les 0 d'un essai et le tri
-     * 
+     *
      * @param essai l'essai a "nettoyer"
      * @return un tableau contenant uniquement des valeurs > 2
      */
@@ -49,18 +50,30 @@ class Grundy2RecGplusGequalsP {
         ArrayList<Integer> tmp = new ArrayList<Integer>();
 
         int i = 0;
-        int lg = 0;
-        for (int k = 0; k < essai.size(); k ++){
-            lg = lg + 1;
+        boolean stop = false;
+        while (i < essai.size() && stop == false ) {
+            ArrayList<Integer> tas = new ArrayList<Integer>();
+            tas.add(essai.get(i));
+            lg = tas.get(0);
+            if (lg >= 51){
+                stop = true;
+            }
+            else if (estPresent(tas, SIT_GAGN)) {
+                unGagnant = true;
+                tmp.add(type[essai.get(i)]);
+            } else if (estPresent(tas, SIT_PERD)) {
+                unPerdant = true;
+            } else {
+                unNeutre = true;
+            }
+            i++;
         }
-        System.out.println(lg);
-        if (lg <= type.length) {
-            while (i < essai.size()) {
+        if (stop == true){
+            while (i < essai.size() ) {
                 ArrayList<Integer> tas = new ArrayList<Integer>();
                 tas.add(essai.get(i));
                 if (estPresent(tas, SIT_GAGN)) {
                     unGagnant = true;
-                    tmp.add(type[essai.get(i)]);
                 } else if (estPresent(tas, SIT_PERD)) {
                     unPerdant = true;
                 } else {
@@ -68,7 +81,8 @@ class Grundy2RecGplusGequalsP {
                 }
                 i++;
             }
-
+        }
+        if (lg <= 50){
             if (unPerdant) {
                 if (!unGagnant && !unNeutre) { // Pas de gagnant et pas de neutre
                     ret = new ArrayList<Integer>();
@@ -120,18 +134,6 @@ class Grundy2RecGplusGequalsP {
                 }
             }
         } else {
-            while (i < essai.size()) {
-                ArrayList<Integer> tas = new ArrayList<Integer>();
-                tas.add(essai.get(i));
-                if (estPresent(tas, SIT_GAGN)) {
-                    unGagnant = true;
-                } else if (estPresent(tas, SIT_PERD)) {
-                    unPerdant = true;
-                } else {
-                    unNeutre = true;
-                }
-                i++;
-            }
             if (unPerdant) {
                 if (!unGagnant && !unNeutre) { // Pas de gagnant et pas de neutre
                     ret = new ArrayList<Integer>();
@@ -192,7 +194,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Cherche si un essai trié est dans le tableau
-     * 
+     *
      * @param essai    essai à chercher
      * @param sitSaved tableau de situations perdantes ou gagnantes
      */
@@ -248,7 +250,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Ajoute un essai trié dans le tableau
-     * 
+     *
      * @param essai    essai à chercher
      * @param sitSaved tableau de situations perdantes ou gagnantes
      */
@@ -332,7 +334,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Joue le coup gagnant s'il existe
-     * 
+     *
      * @param jeu plateau de jeu
      * @return vrai s'il y a un coup gagnant, faux sinon
      */
@@ -371,7 +373,7 @@ class Grundy2RecGplusGequalsP {
     /**
      * Méthode RECURSIVE qui indique si la configuration (du jeu actuel ou jeu
      * d'essai) est perdante
-     * 
+     *
      * @param jeu plateau de jeu actuel (l'état du jeu à un certain moment au cours
      *            de la partie)
      * @return vrai si la configuration (du jeu) est perdante, faux sinon
@@ -483,7 +485,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Divise en deux tas les alumettes d'une ligne de jeu (1 ligne = 1 tas)
-     * 
+     *
      * @param jeu   tableau des alumettes par ligne
      * @param ligne ligne (tas) sur laquelle les alumettes doivent être séparées
      * @param nb    nombre d'alumettes RETIREE de la ligne après séparation
@@ -511,7 +513,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Teste s'il est possible de séparer un des tas
-     * 
+     *
      * @param jeu plateau de jeu
      * @return vrai s'il existe au moins un tas de 3 allumettes ou plus, faux sinon
      */
@@ -533,7 +535,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Crée une toute première configuration d'essai à partir du jeu
-     * 
+     *
      * @param jeu      plateau de jeu
      * @param jeuEssai nouvelle configuration du jeu
      * @return le numéro du tas divisé en deux ou (-1) si il n'y a pas de tas d'au
@@ -608,7 +610,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Test un cas de la méthode testPremier
-     * 
+     *
      * @param jeu   le plateau de jeu
      * @param ligne le numéro du tas séparé en premier
      * @param res   le plateau de jeu après une première séparation
@@ -631,7 +633,7 @@ class Grundy2RecGplusGequalsP {
     /**
      * Génère la configuration d'essai suivante (c'est-à-dire UNE décomposition
      * possible)
-     * 
+     *
      * @param jeu      plateau de jeu
      * @param jeuEssai configuration d'essai du jeu après séparation
      * @param ligne    le numéro du tas qui est le dernier à avoir été séparé
@@ -754,7 +756,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Test un cas de la méthode suivant
-     * 
+     *
      * @param jeu      le plateau de jeu
      * @param jeuEssai le plateau de jeu obtenu après avoir séparé un tas
      * @param ligne    le numéro du tas qui est le dernier à avoir été séparé
@@ -809,7 +811,7 @@ class Grundy2RecGplusGequalsP {
 
     /**
      * Affiche le plateau de jeu
-     * 
+     *
      * @param plateau le plateau du jeu
      */
     void afficherPlateau(ArrayList<Integer> plateau) {
@@ -830,7 +832,7 @@ class Grundy2RecGplusGequalsP {
      * - Demande la ligne à jouer
      * - Demande le nombre de tas à séparer
      * Separe les tas
-     * 
+     *
      * @param plateau tableau du jeu
      */
     void tourJoueur(ArrayList<Integer> plateau) {
@@ -871,7 +873,7 @@ class Grundy2RecGplusGequalsP {
      * Tour de l'ordinateur :
      * - Joue gagnant si possible
      * - Joue aléatoirement sinon
-     * 
+     *
      * @param plateau tableau du jeu
      */
     void tourOrdinateur(ArrayList<Integer> plateau) {
