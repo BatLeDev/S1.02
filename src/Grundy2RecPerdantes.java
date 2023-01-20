@@ -31,7 +31,7 @@ class Grundy2RecPerdantes {
         // testSimplifier();
         // testEstConnu();
         // testAjouterEssai();
-        // testJouerGagnantEfficacite();
+        testJouerGagnantEfficacite();
     }
 
     /**
@@ -103,7 +103,7 @@ class Grundy2RecPerdantes {
     }
 
     /**
-     * Test la méthode estConnu
+     * Test the method estConnu
      */
     void testEstConnu() {
         System.out.println("*** testEstConnu() ***");
@@ -145,7 +145,7 @@ class Grundy2RecPerdantes {
     }
 
     /**
-     * Test la méthode ajouterEssai
+     * Test the method ajouterEssai
      */
     void testAjouterEssai() {
         System.out.println("*** testAjouterEssai() ***");

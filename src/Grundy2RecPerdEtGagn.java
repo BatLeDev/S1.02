@@ -18,7 +18,7 @@ class Grundy2RecPerdEtGagn {
 
     // Variables globales
     long cpt; // compteur d'appels récursifs
-    int NB_MAX_EFFI = 35; // nombre d'allumettes max pour le test d'efficacite
+    int NB_MAX_EFFI = 20; // nombre d'allumettes max pour le test d'efficacite
     ArrayList<ArrayList<Integer>> posPerdantes = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> posGagnantes = new ArrayList<ArrayList<Integer>>(); // situations perdantes
 
@@ -37,7 +37,7 @@ class Grundy2RecPerdEtGagn {
     }
 
     /**
-     *      * Remov h pile where value is less than 2 and sort the try
+     * Remove each pile where value is less than 2 and sort the try
      * 
      * @param essai try to simplify
      * @return an ArrayList which contains only piles with value > 2
@@ -105,7 +105,7 @@ class Grundy2RecPerdEtGagn {
     }
 
     /**
-     * Test la méthode estConnu
+     * Test the method estConnu
      */
     void testEstConnu() {
         System.out.println("*** testEstConnu() ***");
@@ -147,7 +147,7 @@ class Grundy2RecPerdEtGagn {
     }
 
     /**
-     * Test la méthode ajouterEssai
+     * Test the method ajouterEssai
      */
     void testAjouterEssai() {
         System.out.println("*** testAjouterEssai() ***");
