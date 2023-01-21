@@ -18,7 +18,7 @@ class Grundy2RecPerdEtGagn {
 
     // Variables globales
     long cpt; // compteur d'appels récursifs
-    int NB_MAX_EFFI = 20; // nombre d'allumettes max pour le test d'efficacite
+    int NB_MAX_EFFI = 35; // nombre d'allumettes max pour le test d'efficacite
     ArrayList<ArrayList<Integer>> posPerdantes = new ArrayList<ArrayList<Integer>>(); // situations perdantes
     ArrayList<ArrayList<Integer>> posGagnantes = new ArrayList<ArrayList<Integer>>(); // situations perdantes
 
