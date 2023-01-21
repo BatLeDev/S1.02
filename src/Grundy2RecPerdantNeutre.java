@@ -49,7 +49,6 @@ class Grundy2RecPerdantNeutre {
         boolean unNeutre = false;
 
         // Première passe qui analyse le contenu de l'essai
-
         int i = 0;
         while (i < essai.size() && !(unPerdant && (unGagnant || unNeutre))) {
             ArrayList<Integer> tas = new ArrayList<Integer>();
@@ -93,6 +92,7 @@ class Grundy2RecPerdantNeutre {
         return ret;
     }
 
+    // TODO Rajouter des tests
     /**
      * Test the method simplifier
      */
