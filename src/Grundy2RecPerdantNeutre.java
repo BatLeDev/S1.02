@@ -37,7 +37,7 @@ class Grundy2RecPerdantNeutre {
     }
 
     /**
-     * Remove each pile where value is less than 2 or if it's a 
+     * Remove each pile where value is less than 2 or if it's a
      * loosing pile and sort the try.
      * 
      * @param essai try to simplify
@@ -89,7 +89,7 @@ class Grundy2RecPerdantNeutre {
             }
         }
         Collections.sort(ret);
-        
+
         return ret;
     }
 
@@ -273,12 +273,13 @@ class Grundy2RecPerdantNeutre {
 
             else {
                 // Si la situaiton est dans la liste des situations gagnantes
-                if (estConnu(jeu, posGagnantes)) { 
+                if (estConnu(jeu, posGagnantes)) {
                     ret = false;
                 } else {
 
-                // si la situation est déjà connue comme perdante, alors on arrete la récursivité
-                if (estConnu(jeu, posPerdantes)) {
+                    // si la situation est déjà connue comme perdante, alors on arrete la
+                    // récursivité
+                    if (estConnu(jeu, posPerdantes)) {
                         ret = true;
 
                     } else {
@@ -302,14 +303,14 @@ class Grundy2RecPerdantNeutre {
                             // Si UNE SEULE décomposition (à partir du jeu) est perdante (pour l'adversaire)
                             // alors la configuration n'EST PAS perdante.
                             // Ici l'appel à "estPerdante" est RECURSIF.
-                            
+
                             ArrayList<Integer> essaiClean = simplifier(essai);
 
                             if (estPerdante(essaiClean)) {
                                 // si l'essai est perdant ( pour l'adversaire)
                                 // alors on sauvegarde l'essai en tant que perdante
                                 // on sauvegarde le jeu en tant que gagnant
-                                // et on arrete la récursivité 
+                                // et on arrete la récursivité
                                 ajouterEssai(essaiClean, posPerdantes);
                                 ajouterEssai(jeu, posGagnantes);
                                 ret = false;
@@ -400,9 +401,9 @@ class Grundy2RecPerdantNeutre {
     }
 
     /**
-     * Try if it is possible to separate the matches of a line 
+     * Try if it is possible to separate the matches of a line
      * 
-     * @param jeu  game board
+     * @param jeu game board
      * @return true if it is possible to separate the matches of a line
      */
     boolean estPossible(ArrayList<Integer> jeu) {
@@ -426,7 +427,7 @@ class Grundy2RecPerdantNeutre {
      * 
      * @param jeu      game board
      * @param jeuEssai new try game board
-     * @return the number of the pile divided into two or (-1) if there is no pile 
+     * @return the number of the pile divided into two or (-1) if there is no pile
      *         of at least 3 matches
      */
     int premier(ArrayList<Integer> jeu, ArrayList<Integer> jeuEssai) {
@@ -524,14 +525,10 @@ class Grundy2RecPerdantNeutre {
      * @param jeu      game board
      * @param jeuEssai try game board after the decomposition
      * @param ligne    index of the last pile to be divided
-     * @return the index of the pile divided in two for the new configuration, 
+     * @return the index of the pile divided in two for the new configuration,
      *         -1 if no more decomposition is possible
      */
     int suivant(ArrayList<Integer> jeu, ArrayList<Integer> jeuEssai, int ligne) {
-
-        // System.out.println("suivant(" + jeu.toString() + ", " +jeuEssai.toString() +
-        // ", " + ligne + ") = ");
-
         int numTas = -1; // par défaut il n'y a plus de décomposition possible
 
         int i = 0;
@@ -542,9 +539,7 @@ class Grundy2RecPerdantNeutre {
             System.err.println("suivant() : le paramètre jeuEssai est null");
         } else if (ligne >= jeu.size()) {
             System.err.println("estPossible(): le paramètre ligne est trop grand");
-        }
-
-        else {
+        } else {
 
             int nbAllumEnLigne = jeuEssai.get(ligne);
             int nbAllDernCase = jeuEssai.get(jeuEssai.size() - 1);
