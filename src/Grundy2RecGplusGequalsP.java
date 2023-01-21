@@ -70,7 +70,7 @@ class Grundy2RecGplusGequalsP {
                 // On va chercher a le comparer avec les autres tas
                 // Si il y a un tas du meme type, on les supprime
 
-                int j = i+1;
+                int j = i + 1;
                 while (j < ret.size()) { // Parcours des tas restants
                     if (ret.get(j) < 50) { // Si le type du tas n'est pas conn est connu
                         if (i < 0) {
@@ -119,7 +119,7 @@ class Grundy2RecGplusGequalsP {
             System.out.println("ERREUR");
         }
 
-        essai.remove(essai.size()-1);
+        essai.remove(essai.size() - 1);
         essai.add(3);
 
         essaiCleanAtt = new ArrayList<Integer>();
@@ -288,12 +288,13 @@ class Grundy2RecGplusGequalsP {
 
             else {
                 // Si la situaiton est dans la liste des situations gagnantes
-                if (estConnu(jeu, posGagnantes)) { 
+                if (estConnu(jeu, posGagnantes)) {
                     ret = false;
                 } else {
 
-                // si la situation est déjà connue comme perdante, alors on arrete la récursivité
-                if (estConnu(jeu, posPerdantes)) {
+                    // si la situation est déjà connue comme perdante, alors on arrete la
+                    // récursivité
+                    if (estConnu(jeu, posPerdantes)) {
                         ret = true;
 
                     } else {
@@ -324,7 +325,7 @@ class Grundy2RecGplusGequalsP {
                                 // si l'essai est perdant ( pour l'adversaire)
                                 // alors on sauvegarde l'essai en tant que perdante
                                 // on sauvegarde le jeu en tant que gagnant
-                                // et on arrete la récursivité 
+                                // et on arrete la récursivité
                                 ajouterEssai(essaiClean, posPerdantes);
                                 ajouterEssai(jeu, posGagnantes);
                                 ret = false;
@@ -415,9 +416,9 @@ class Grundy2RecGplusGequalsP {
     }
 
     /**
-     * Try if it is possible to separate the matches of a line 
+     * Try if it is possible to separate the matches of a line
      *
-     * @param jeu  game board
+     * @param jeu game board
      * @return true if it is possible to separate the matches of a line
      */
     boolean estPossible(ArrayList<Integer> jeu) {
@@ -441,7 +442,7 @@ class Grundy2RecGplusGequalsP {
      *
      * @param jeu      game board
      * @param jeuEssai new try game board
-     * @return the number of the pile divided into two or (-1) if there is no pile 
+     * @return the number of the pile divided into two or (-1) if there is no pile
      *         of at least 3 matches
      */
     int premier(ArrayList<Integer> jeu, ArrayList<Integer> jeuEssai) {
@@ -539,7 +540,7 @@ class Grundy2RecGplusGequalsP {
      * @param jeu      game board
      * @param jeuEssai try game board after the decomposition
      * @param ligne    index of the last pile to be divided
-     * @return the index of the pile divided in two for the new configuration, 
+     * @return the index of the pile divided in two for the new configuration,
      *         -1 if no more decomposition is possible
      */
     int suivant(ArrayList<Integer> jeu, ArrayList<Integer> jeuEssai, int ligne) {
