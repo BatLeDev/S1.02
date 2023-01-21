@@ -37,7 +37,8 @@ class Grundy2RecPerdantNeutre {
     }
 
     /**
-     * Remove each pile where value is less than 2 and sort the try
+     * Remove each pile where value is less than 2 or if it's a 
+     * loosing pile and sort the try.
      * 
      * @param essai try to simplify
      * @return an ArrayList which contains only piles with value > 2
@@ -172,7 +173,6 @@ class Grundy2RecPerdantNeutre {
      * @param sitSaved table of losing situations
      */
     void ajouterEssai(ArrayList<Integer> essai, ArrayList<ArrayList<Integer>> sitSaved) {
-
         ArrayList<Integer> essaiClean = simplifier(essai); // On simplifie l'essai
         if (!estConnu(essaiClean, sitSaved)) { // Si l'essai n'est pas deja connu
             sitSaved.add(essaiClean);
